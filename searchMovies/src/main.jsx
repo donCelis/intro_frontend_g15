@@ -9,8 +9,7 @@ import { createRoot } from 'react-dom/client'
 // componentes
 import App from './components/App'
 
+// pd: borrar el StrictMode antes de desplegar
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+  <App />
 )
