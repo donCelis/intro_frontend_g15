@@ -3,12 +3,19 @@ import axios from 'axios'
 
 // components
 import Movies from './Movies'
+import Loading from './Loading'
 
 const apiKey = 'ea92314d'
+
+// to do
+// esperar la carga de la data
+// capturar el error
 
 function App () {
   const searchRef = useRef(null)
   const [movies, setMovies] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const getMovies = (query = 'batman') => {
     return axios.get(`
@@ -21,6 +28,7 @@ function App () {
     // setMovies(Search)
     const { data } = await getMovies()
     setMovies(data.Search)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -30,7 +38,12 @@ function App () {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const { data } = await getMovies(searchRef.current.value)
-    setMovies(data.Search)
+    if (data.Response === 'False') {
+      setError(data.Error)
+      setMovies([])
+    } else {
+      setMovies(data.Search)
+    }
   }
 
   return (
@@ -48,7 +61,9 @@ function App () {
           <button className='btn btn-primary'>Buscar</button>
         </div>
       </form>
-      <Movies data={movies} />
+      <section className='py-4'>
+        {loading ? <Loading /> : <Movies data={movies} />}
+      </section>
     </section>
   )
 }
