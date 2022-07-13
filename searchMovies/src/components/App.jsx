@@ -1,49 +1,27 @@
-import { useState, useEffect, useRef } from 'react'
-import axios from 'axios'
+import { useRef } from 'react'
 
+// hooks
+import useFetcher from '../hooks/useFetcher'
 // components
 import Movies from './Movies'
 import Loading from './Loading'
-
-const apiKey = 'ea92314d'
-
-// to do
-// esperar la carga de la data
-// capturar el error
+import getMovies from '../utils/getMovies'
 
 function App () {
   const searchRef = useRef(null)
-  const [movies, setMovies] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  const getMovies = (query = 'batman') => {
-    return axios.get(`
-      http://www.omdbapi.com/?apikey=${apiKey}&s=${query}
-    `).then(response => response)
-  }
-
-  const getData = async () => {
-    // const { data: { Search } } = await getMovies()
-    // setMovies(Search)
-    const { data } = await getMovies()
-    setMovies(data.Search)
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    getData()
-  }, [])
+  const { data: movies, loading, error } = useFetcher('avengers')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const { data } = await getMovies(searchRef.current.value)
+    /* const { data } = await getMovies(searchRef.current.value)
     if (data.Response === 'False') {
       setError(data.Error)
       setMovies([])
     } else {
       setMovies(data.Search)
-    }
+    } */
+    const { data } = await getMovies(searchRef.current.value)
+    console.log(data)
   }
 
   return (
