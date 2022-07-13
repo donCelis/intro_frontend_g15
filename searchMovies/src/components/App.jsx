@@ -1,44 +1,37 @@
 import { useState, useEffect, useRef } from 'react'
+import axios from 'axios'
+
+// components
+import Movies from './Movies'
 
 const apiKey = 'ea92314d'
 
 function App () {
-  /*
-    reglas de los hooks
-    --se deben ejecutar en la cabecera (logica) de un componente
-    --no se pueden cargar en condicionales, ni ciclos
-  */
-  const [text, setText] = useState('')
-
-  // se ejecuta siempre que se monta el componente o hay un cambio de estado
-  /* useEffect(() => {
-    setText('desde el useEffect')
-    console.log('carga del componente')
-  }) */
-
-  // se ejecuta la primera vez que se carga el componente
-  /* useEffect(() => {
-    setText('desde el useEffect')
-    console.log('se carga la primera vez')
-  }, []) */
-
-  // se ejecuta cuando hay un cambio en alguna dependencia
-  /* useEffect(() => {
-    setText('desde el useEffect')
-    console.log('se carga la primera vez')
-
-    if (text !== '') console.log('cambio de estado')
-  }, [text]) */
-
   const searchRef = useRef(null)
+  const [movies, setMovies] = useState([])
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log(searchRef.current.value)
-    setText('desde un evento')
+  const getMovies = (query = 'batman') => {
+    return axios.get(`
+      http://www.omdbapi.com/?apikey=${apiKey}&s=${query}
+    `).then(response => response)
   }
 
-  console.log(text)
+  const getData = async () => {
+    // const { data: { Search } } = await getMovies()
+    // setMovies(Search)
+    const { data } = await getMovies()
+    setMovies(data)
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const { data } = await getMovies(searchRef.current.value)
+    setMovies(data.Search)
+  }
 
   return (
     <section className='container'>
@@ -55,6 +48,7 @@ function App () {
           <button className='btn btn-primary'>Buscar</button>
         </div>
       </form>
+      <Movies data={movies} />
     </section>
   )
 }
