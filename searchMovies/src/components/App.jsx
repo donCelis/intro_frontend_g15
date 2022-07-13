@@ -20,7 +20,7 @@ function App () {
     // const { data: { Search } } = await getMovies()
     // setMovies(Search)
     const { data } = await getMovies()
-    setMovies(data)
+    setMovies(data.Search)
   }
 
   useEffect(() => {
